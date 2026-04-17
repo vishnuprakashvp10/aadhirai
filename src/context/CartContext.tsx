@@ -86,6 +86,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(cartReducer, { items: [], itemCount: 0, total: 0 });
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     try {
       const saved = localStorage.getItem('aadhirai_cart');
       if (saved) dispatch({ type: 'LOAD_CART', items: JSON.parse(saved) });
@@ -93,6 +94,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     localStorage.setItem('aadhirai_cart', JSON.stringify(state.items));
   }, [state.items]);
 

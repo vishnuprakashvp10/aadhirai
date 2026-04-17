@@ -1,5 +1,7 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
+export const dynamic = 'force-dynamic';
 import { useCart } from '@/context/CartContext';
 import { formatPrice } from '@/utils';
 import { useRouter } from 'next/navigation';
@@ -96,9 +98,18 @@ export default function CheckoutPage() {
     }
   };
 
+  useEffect(() => {
+    if (items.length === 0) {
+      router.replace('/cart');
+    }
+  }, [items.length, router]);
+
   if (items.length === 0) {
-    router.replace('/cart');
-    return null;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-forest-900 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
   }
 
   const inputClass = "w-full border border-stone-200 px-4 py-3 font-body text-sm outline-none focus:border-forest-900 transition-colors rounded-sm placeholder:text-stone-300";

@@ -35,10 +35,12 @@ export async function POST(req: NextRequest) {
 
     // Update customer stats
     if (order?.customer_id) {
-      await supabase.rpc('increment_customer_stats', {
-        cid: order.customer_id,
-        amount: order.total,
-      }).catch(() => {}); // graceful fail if RPC not set up
+      try {
+        await supabase.rpc('increment_customer_stats', {
+          cid: order.customer_id,
+          amount: order.total,
+        });
+      } catch {} // graceful fail if RPC not set up
     }
 
     // Reduce stock

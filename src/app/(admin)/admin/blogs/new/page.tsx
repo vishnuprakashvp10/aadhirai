@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
@@ -15,7 +15,7 @@ const emptyForm = {
   meta_title: '', meta_description: '',
 };
 
-export default function AdminBlogFormPage() {
+function BlogFormContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const blogId = searchParams.get('id');
@@ -81,7 +81,6 @@ export default function AdminBlogFormPage() {
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
-        {/* Main content */}
         <div className="lg:col-span-2 space-y-5">
           <div className="bg-white border border-stone-100 rounded-sm p-6 space-y-4">
             <div>
@@ -109,7 +108,6 @@ export default function AdminBlogFormPage() {
             </div>
           </div>
 
-          {/* SEO */}
           <div className="bg-white border border-stone-100 rounded-sm p-6 space-y-4">
             <h3 className="font-display text-base font-semibold text-forest-900 pb-3 border-b border-stone-100">SEO</h3>
             <div>
@@ -123,7 +121,6 @@ export default function AdminBlogFormPage() {
           </div>
         </div>
 
-        {/* Sidebar */}
         <div className="space-y-5">
           <div className="bg-white border border-stone-100 rounded-sm p-5 space-y-4">
             <h3 className="font-display text-base font-semibold text-forest-900 pb-3 border-b border-stone-100">Blog Details</h3>
@@ -185,5 +182,36 @@ export default function AdminBlogFormPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+function Loading() {
+  return (
+    <div className="max-w-5xl space-y-6">
+      <div className="h-8 w-48 shimmer rounded-sm" />
+      <div className="grid lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 space-y-5">
+          <div className="bg-white border border-stone-100 rounded-sm p-6 space-y-4">
+            <div className="h-10 shimmer rounded-sm" />
+            <div className="h-10 shimmer rounded-sm" />
+            <div className="h-24 shimmer rounded-sm" />
+          </div>
+        </div>
+        <div className="space-y-5">
+          <div className="bg-white border border-stone-100 rounded-sm p-5 space-y-4">
+            <div className="h-10 shimmer rounded-sm" />
+            <div className="h-10 shimmer rounded-sm" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function AdminBlogFormPage() {
+  return (
+    <Suspense fallback={<Loading />}>
+      <BlogFormContent />
+    </Suspense>
   );
 }

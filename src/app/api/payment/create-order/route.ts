@@ -3,10 +3,15 @@ import Razorpay from 'razorpay';
 import { createAdminSupabaseClient } from '@/lib/supabase/server';
 import { generateOrderNumber } from '@/utils';
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID!,
-  key_secret: process.env.RAZORPAY_KEY_SECRET!,
-});
+function getRazorpay() {
+  if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+    throw new Error('Razorpay not configured');
+  }
+  return new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
+  });
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,7 +22,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
     }
 
-    // Create Razorpay order
+    const razorpay = getRazorpay();
     const razorpayOrder = await razorpay.orders.create({
       amount: Math.round(amount * 100), // in paise
       currency: 'INR',

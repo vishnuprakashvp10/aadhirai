@@ -17,6 +17,7 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ['razorpay'],
   },
+  output: 'standalone',
 };
 
 module.exports = nextConfig;

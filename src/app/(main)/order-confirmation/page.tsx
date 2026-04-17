@@ -1,18 +1,21 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { CheckCircle, Package, Truck, Home, ArrowRight } from 'lucide-react';
 import { formatPrice } from '@/utils';
 
-export default function OrderConfirmationPage() {
+function OrderConfirmationContent() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get('order');
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!orderId) return;
+    if (!orderId) {
+      setLoading(false);
+      return;
+    }
     fetch(`/api/orders/${orderId}`)
       .then((r) => r.json())
       .then((d) => { setOrder(d.order); setLoading(false); })
@@ -42,7 +45,6 @@ export default function OrderConfirmationPage() {
           </div>
         ) : order ? (
           <div className="bg-white shadow-lg rounded-sm overflow-hidden border border-stone-100">
-            {/* Order Header */}
             <div className="p-6 border-b border-stone-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <p className="font-body text-xs text-stone-400 tracking-widest uppercase mb-0.5">Order Number</p>
@@ -54,7 +56,6 @@ export default function OrderConfirmationPage() {
               </div>
             </div>
 
-            {/* Order Items */}
             <div className="p-6 border-b border-stone-100">
               <h3 className="font-display text-base font-semibold text-forest-900 mb-4">Items Ordered</h3>
               <div className="space-y-3">
@@ -77,7 +78,6 @@ export default function OrderConfirmationPage() {
               </div>
             </div>
 
-            {/* Shipping Address */}
             <div className="p-6 border-b border-stone-100">
               <h3 className="font-display text-base font-semibold text-forest-900 mb-3">Shipping To</h3>
               <div className="flex items-start gap-3">
@@ -92,7 +92,6 @@ export default function OrderConfirmationPage() {
               </div>
             </div>
 
-            {/* Order Timeline */}
             <div className="p-6 border-b border-stone-100">
               <h3 className="font-display text-base font-semibold text-forest-900 mb-4">What Happens Next</h3>
               <div className="space-y-4">
@@ -115,7 +114,6 @@ export default function OrderConfirmationPage() {
               </div>
             </div>
 
-            {/* Confirmation email note */}
             <div className="p-6 bg-gold-50">
               <p className="font-body text-sm text-stone-600">
                 A confirmation email has been sent to <strong className="text-forest-900">{order.customer_email}</strong>. 
@@ -139,5 +137,21 @@ export default function OrderConfirmationPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+function Loading() {
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="w-8 h-8 border-2 border-forest-900 border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+}
+
+export default function OrderConfirmationPage() {
+  return (
+    <Suspense fallback={<Loading />}>
+      <OrderConfirmationContent />
+    </Suspense>
   );
 }
